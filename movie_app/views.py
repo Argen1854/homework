@@ -130,3 +130,30 @@ def MoviesReviesList(request):
     movie = models.Movie.objects.all()
     data = serializers.MoviesSerializersList(movie, many=True).data
     return Response(data=data)
+
+from django.contrib.auth import authenticate
+from rest_framework.authtoken.models import Token
+
+@api_view(['POST'])
+def authorization(request):
+    username = request.data.get("username")
+    password = request.data.get("password")
+    user = authenticate(username=username, password=password)
+    if user:
+        Token.objects.filter(user=user).delete()
+        token = Token.objects.create(user=user)
+        return Response(data={'key': token.key})
+    return Response(data={"error": "user not found!"}, status=status.HTTP_404_NOT_FOUND)
+
+
+from django.contrib.auth.models import User
+from django.core.mail import send_mail
+
+@api_view(['POST'])
+def registration(request):
+    username = request.data.get("username")
+    password = request.data.get("password")
+    email = request.data.get("email")
+    model = User.objects.create_user(username=username, password=password, email=email)
+    return Response(data= {'message': 'User created'}, status=status.HTTP_201_CREATED)
+

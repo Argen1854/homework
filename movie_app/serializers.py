@@ -1,4 +1,3 @@
-from random import choice, choices
 from django.forms import CharField
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
@@ -15,6 +14,7 @@ class MovieSerializersList(serializers.ModelSerializer):
     class Meta:
         model = models.Movie
         fields = "id title description duration director".split()
+
 
 class MoviesSerializersList(serializers.ModelSerializer):
     class Meta:
